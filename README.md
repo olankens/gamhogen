@@ -7,11 +7,11 @@ Windows automatic setup for gamers.
 # <samp>FEATURES</samp>
 
 - Setup and tweak Windows
-- Setup and tweak Amd
-- Setup and tweak Nvidia
+- Setup and tweak GPU Drivers
 - Setup and tweak Firefox
-- Setup and tweak Heroic
-- Setup and tweak Hydra
+- Setup and tweak Qbittorrent
+- Setup and tweak Epic Games Launcher
+- Setup and tweak Playnite
 - Setup and tweak Steam
 - Setup and tweak Appearance
 

@@ -44,6 +44,12 @@ Function Update-Amd {
 
 }
 
+Function Update-EpicGamesLauncher {
+
+    throw [NotImplementedException] "This function has not been implemented yet"
+
+}
+
 Function Update-Firefox {
 
     $Current = Get-FileVersion "$Env:ProgramFiles\Mozilla Firefox\firefox.exe"
@@ -115,6 +121,7 @@ Function Update-Heroic {
     Use-RemoveDesktop -Pattern "Heroic*.lnk"
 
 }
+
 Function Update-Hydra {
 
     $Current = Get-FileVersion "$Env:LocalAppData\Programs\Hydra\Hydra.exe"
@@ -159,6 +166,18 @@ Function Update-Nvidia {
 
 }
 
+Function Update-Playnite {
+
+    throw [NotImplementedException] "This function has not been implemented yet"
+
+}
+
+Function Update-Qbittorrent {
+
+    throw [NotImplementedException] "This function has not been implemented yet"
+
+}
+
 Function Update-Steam {
 
     $Current = Get-FileVersion "Steam*"
@@ -196,12 +215,12 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
 
     $Members = @(
         { Update-Windows },
-        { Update-Nanazip }
         { Update-Amd },
         { Update-Nvidia },
         { Update-Firefox },
-        { Update-Heroic },
-        { Update-Hydra },
+        { Update-Qbittorrent },
+        { Update-EpicGamesLauncher },
+        { Update-Playnite },
         { Update-Steam },
         { Update-Appearance }
     )
