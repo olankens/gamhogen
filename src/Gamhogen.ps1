@@ -59,7 +59,7 @@ Function Update-Firefox {
 
     If (-Not $Updated) {
         $Address = "https://download.mozilla.org/?product=firefox-msi-latest-ssl&os=win64&lang=en-US"
-        $Fetched = Join-Path "$([System.IO.Path]::GetTempPath())" "FirefoxSetup.msi"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "FirefoxSetup.msi"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "msiexec" "/i `"$Using:Fetched`" /qn DESKTOP_SHORTCUT=false INSTALL_MAINTENANCE_SERVICE=false" -Wait }
     }
@@ -113,7 +113,7 @@ Function Update-Heroic {
     If (-Not $Updated) {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
         $Address = $Results.Where( { $_.browser_download_url -Like "*Setup-x64.exe" } ).browser_download_url
-        $Fetched = Join-Path "$([System.IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "$Using:Fetched" "/S" -Wait }
     }
@@ -132,12 +132,60 @@ Function Update-Hydra {
     If (-Not $Updated) {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
         $Address = $Results.Where( { $_.browser_download_url -Like "*setup.exe" } ).browser_download_url
-        $Fetched = Join-Path "$([System.IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "$Using:Fetched" "/S" -Wait }
     }
 
     Use-RemoveDesktop -Pattern "Hydra*.lnk"
+
+}
+
+Function Update-Jdownloader {
+
+    Param (
+        [String] $Deposit = "$Env:UserProfile\Downloads\JD2"
+    )
+
+    $Starter = "$Env:ProgramFiles\JDownloader\JDownloader2.exe"
+    $Present = Test-Path "$Starter"
+
+    If (-Not $Present) {
+        $Address = "http://installer.jdownloader.org/clean/JD2SilentSetup_x64.exe"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+        (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
+        Invoke-Gsudo { Start-Process "$Using:Fetched" "-q" -Wait }
+        Use-RemoveDesktop -Pattern "JDownloader*.lnk"
+    }
+
+    If (-Not $Present) {
+        New-Item "$Deposit" -ItemType Directory -EA SI
+        $AppData = "$Env:ProgramFiles\JDownloader\cfg"
+        $Config1 = "$AppData\org.jdownloader.settings.GeneralSettings.json"
+        $Config2 = "$AppData\org.jdownloader.settings.GraphicalUserInterfaceSettings.json"
+        $Config3 = "$AppData\org.jdownloader.extensions.extraction.ExtractionExtension.json"
+        Start-Process "$Starter" ; While (-Not (Test-Path "$Config1")) { Start-Sleep 2 }
+        Stop-Process -Name "JDownloader2" -EA SI ; Start-Sleep 2
+        $Configs = Get-Content "$Config1" | ConvertFrom-Json
+        Try { $Configs.defaultdownloadfolder = "$Deposit" } Catch { $Configs | Add-Member -Type NoteProperty -Name "defaultdownloadfolder" -Value "$Deposit" }
+        Invoke-Gsudo { $Using:Configs | ConvertTo-Json | Set-Content "$Using:Config1" }
+        $Configs = Get-Content "$Config2" | ConvertFrom-Json
+        Try { $Configs.bannerenabled = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "bannerenabled" -Value $False }
+        Try { $Configs.clipboardmonitored = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "clipboardmonitored" -Value $False }
+        Try { $Configs.donatebuttonlatestautochange = 4102444800000 } Catch { $Configs | Add-Member -Type NoteProperty -Name "donatebuttonlatestautochange" -Value 4102444800000 }
+        Try { $Configs.donatebuttonstate = "AUTO_HIDDEN" } Catch { $Configs | Add-Member -Type NoteProperty -Name "donatebuttonstate" -Value "AUTO_HIDDEN" }
+        Try { $Configs.myjdownloaderviewvisible = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "myjdownloaderviewvisible" -Value $False }
+        Try { $Configs.premiumalertetacolumnenabled = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "premiumalertetacolumnenabled" -Value $False }
+        Try { $Configs.premiumalertspeedcolumnenabled = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "premiumalertspeedcolumnenabled" -Value $False }
+        Try { $Configs.premiumalerttaskcolumnenabled = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "premiumalerttaskcolumnenabled" -Value $False }
+        Try { $Configs.specialdealoboomdialogvisibleonstartup = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "specialdealoboomdialogvisibleonstartup" -Value $False }
+        Try { $Configs.specialdealsenabled = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "specialdealsenabled" -Value $False }
+        Try { $Configs.speedmetervisible = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "speedmetervisible" -Value $False }
+        Invoke-Gsudo { $Using:Configs | ConvertTo-Json | Set-Content "$Using:Config2" }
+        $Configs = Get-Content "$Config3" | ConvertFrom-Json
+        Try { $Configs.enabled = $False } Catch { $Configs | Add-Member -Type NoteProperty -Name "enabled" -Value $False }
+        Invoke-Gsudo { $Using:Configs | ConvertTo-Json | Set-Content "$Using:Config3" }
+    }
 
 }
 
@@ -158,7 +206,7 @@ Function Update-Nvidia {
 
     If (-Not $Updated) {
         $Address = "https://us.download.nvidia.com/Windows/$Version/$Version-desktop-win10-win11-64bit-international-dch-whql.exe"
-        $Fetched = Join-Path "$([System.IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         $Extract = Use-ExpandArchive "$Fetched"
         Invoke-Gsudo { Start-Process "$Using:Extract\setup.exe" "Display.Driver HDAudio.Driver -clean -s -noreboot" -Wait }
@@ -174,7 +222,35 @@ Function Update-Playnite {
 
 Function Update-Qbittorrent {
 
-    throw [NotImplementedException] "This function has not been implemented yet"
+    Param (
+        [String] $Deposit = "$Env:UserProfile\Downloads\P2P",
+        [String] $Loading = "$Env:UserProfile\Downloads\P2P\Incompleted"
+    )
+
+    $Starter = "$Env:ProgramFiles\qBittorrent\qbittorrent.exe"
+    $Current = Get-FileVersion "$Starter"
+    $Address = "https://www.qbittorrent.org/download.php"
+    $Version = [Regex]::Matches((Invoke-WebRequest "$Address"), "Latest:\s+v([\d.]+)").Groups[1].Value
+    $Updated = [Version] "$Current" -Ge [Version] "$Version"
+
+    If (-Not $Updated) {
+        $Address = "https://downloads.sourceforge.net/project/qbittorrent/qbittorrent-win32/qbittorrent-$Version/qbittorrent_${Version}_x64_setup.exe"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+        (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
+        Invoke-Gsudo { Start-Process "$Using:Fetched" "/S" -Wait }
+    }
+
+    $Configs = "$Env:AppData\qBittorrent\qBittorrent.ini"
+    New-Item "$Deposit" -ItemType Directory -EA SI
+    New-Item "$Loading" -ItemType Directory -EA SI
+    New-Item "$(Split-Path "$Configs")" -ItemType Directory -EA SI
+    Set-Content -Path "$Configs" -Value "[LegalNotice]"
+    Add-Content -Path "$Configs" -Value "Accepted=true"
+    Add-Content -Path "$Configs" -Value "[Preferences]"
+    Add-Content -Path "$Configs" -Value "Bittorrent\MaxRatio=0"
+    Add-Content -Path "$Configs" -Value "Downloads\SavePath=$($Deposit.Replace("\", "/"))"
+    Add-Content -Path "$Configs" -Value "Downloads\TempPath=$($Loading.Replace("\", "/"))"
+    Add-Content -Path "$Configs" -Value "Downloads\TempPathEnabled=true"
 
 }
 
@@ -187,7 +263,7 @@ Function Update-Steam {
 
     If (-Not $Updated) {
         $Address = "http://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
-        $Fetched = Join-Path "$([System.IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "$Using:Fetched" "/S" -Wait }
         Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Steam" -EA SI
@@ -218,6 +294,7 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
         { Update-Amd },
         { Update-Nvidia },
         { Update-Firefox },
+        { Update-Jdownloader },
         { Update-Qbittorrent },
         { Update-EpicGamesLauncher },
         { Update-Playnite },
