@@ -46,7 +46,7 @@ Function Update-Amd {
 
 Function Update-EpicGamesLauncher {
 
-    $Current = Get-FileVersion "$Env:ProgramFiles\Mozilla Firefox\firefox.exe"
+    $Current = Get-FileVersion "${Env:ProgramFiles(x86)}\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
     $Address = "https://raw.githubusercontent.com/Calinou/scoop-games/refs/heads/master/bucket/epic-games-launcher.json"
     $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).version , "[\d.]+").Value
     $Updated = [Version] "$Current" -Ge [Version] "$Version"
@@ -56,6 +56,7 @@ Function Update-EpicGamesLauncher {
         $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "setup.msi"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "msiexec" "/i `"$Using:Fetched`" /qn" -Wait }
+        Use-RemoveDesktop -Pattern "Epic Games Launcher*.lnk"
     }
 
 }
@@ -300,16 +301,16 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
     "
 
     $Members = @(
-        # { Update-Windows },
-        # { Update-Amd },
-        # { Update-Nvidia },
-        # { Update-Firefox },
-        # { Update-Jdownloader },
-        # { Update-Qbittorrent },
-        { Update-EpicGamesLauncher }
-        # { Update-Playnite },
-        # { Update-Steam },
-        # { Update-Appearance }
+        { Update-Windows },
+        { Update-Amd },
+        { Update-Nvidia },
+        { Update-Firefox },
+        { Update-Jdownloader },
+        { Update-Qbittorrent },
+        { Update-EpicGamesLauncher },
+        { Update-Playnite },
+        { Update-Steam },
+        { Update-Appearance }
     )
 
     Use-UpdateWrapper -Heading $Heading -Members $Members
