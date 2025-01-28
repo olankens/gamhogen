@@ -19,6 +19,8 @@ Windows automatic setup for gamers.
 
 # <samp>GUIDANCE</samp>
 
+### Launch the script
+
 Blindly executing this is strongly discouraged.
 
 ```powershell
