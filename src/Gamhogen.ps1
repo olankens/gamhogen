@@ -46,7 +46,17 @@ Function Update-Amd {
 
 Function Update-EpicGamesLauncher {
 
-    throw [NotImplementedException] "This function has not been implemented yet"
+    $Current = Get-FileVersion "$Env:ProgramFiles\Mozilla Firefox\firefox.exe"
+    $Address = "https://raw.githubusercontent.com/Calinou/scoop-games/refs/heads/master/bucket/epic-games-launcher.json"
+    $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).version , "[\d.]+").Value
+    $Updated = [Version] "$Current" -Ge [Version] "$Version"
+
+    If (-Not $Updated) {
+        $Address = "https://epicgames-download1.akamaized.net/Builds/UnrealEngineLauncher/Installers/Win32/EpicInstaller-${Version}.msi#/setup.msi_"
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "setup.msi"
+        (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
+        Invoke-Gsudo { Start-Process "msiexec" "/i `"$Using:Fetched`" /qn" -Wait }
+    }
 
 }
 
@@ -290,16 +300,16 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
     "
 
     $Members = @(
-        { Update-Windows },
-        { Update-Amd },
-        { Update-Nvidia },
-        { Update-Firefox },
-        { Update-Jdownloader },
-        { Update-Qbittorrent },
-        { Update-EpicGamesLauncher },
-        { Update-Playnite },
-        { Update-Steam },
-        { Update-Appearance }
+        # { Update-Windows },
+        # { Update-Amd },
+        # { Update-Nvidia },
+        # { Update-Firefox },
+        # { Update-Jdownloader },
+        # { Update-Qbittorrent },
+        { Update-EpicGamesLauncher }
+        # { Update-Playnite },
+        # { Update-Steam },
+        # { Update-Appearance }
     )
 
     Use-UpdateWrapper -Heading $Heading -Members $Members
