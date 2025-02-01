@@ -6,16 +6,16 @@ Windows automatic setup for gamers.
 
 # <samp>FEATURES</samp>
 
-- Setup and tweak Windows
-- Setup and tweak Amd
-- Setup and tweak Nvidia
-- Setup and tweak Firefox
-- Setup and tweak Jdownloader
-- Setup and tweak Qbittorrent
-- Setup and tweak Epic Games Launcher
-- Setup and tweak Steam
-- Setup and tweak Xmouser
-- Setup and tweak Appearance
+- Update Windows
+- Update Amd
+- Update Nvidia
+- Update Firefox
+- Update Jdownloader
+- Update Qbittorrent
+- Update Epic Games Launcher
+- Update Steam
+- Update Xmouser
+- Update Appearance
 
 # <samp>GUIDANCE</samp>
 
