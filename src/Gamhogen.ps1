@@ -297,6 +297,7 @@ Function Update-Xmouser {
 
     $Deposit = "$Env:LocalAppData\Packages\Xmouser"
     If (-Not (Test-Path -Path "$Deposit")) { New-Item -ItemType Directory -Path "$Deposit" }
+
     Set-DeveloperMode -Enabled $True
     $Address = "https://apps.microsoft.com/detail/9n826ps2qqpf"
     $Archive = Get-FromMicrosoftStore -Payload "$Address"
@@ -304,12 +305,12 @@ Function Update-Xmouser {
     Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI ; Start-Sleep -Seconds 5
     Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") > $null 2>&1 ; Start-Sleep -Seconds 5
     Set-DeveloperMode -Enabled $False
+
+    Add-Type -AssemblyName System.Windows.Forms
     Start-Sleep 5 ; Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
     Start-Sleep 8 ; Get-Process -Name msedge | ForEach-Object { $_.Kill() } 
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ESC}")
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-
-    # TODO: Launch Xmouser and enable it
+    Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ESC}")
+    Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
 }
 
