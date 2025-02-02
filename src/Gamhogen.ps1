@@ -7,7 +7,7 @@ Function Update-Appearance {
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value 0
-    # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideIcons" -Value 1
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideIcons" -Value 1
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type Dword -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Type Dword -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type Dword -Value 0
@@ -30,14 +30,13 @@ Function Update-Appearance {
 
     Set-DisplayScaling -Scaling 3
 
-    $Deposit = "$Env:UserProfile\Desktop"
-
-    Use-RemoveDesktop -Pattern "Microsoft Edge*.lnk"
-    Use-CreateShortcut -LnkFile "$Deposit\Firefox.lnk" -Starter "$Env:ProgramFiles\Mozilla Firefox\firefox.exe"
-    Use-CreateShortcut -LnkFile "$Deposit\JDownloader 2.lnk" -Starter "$Env:ProgramFiles\JDownloader\JDownloader2.exe"
-    Use-CreateShortcut -LnkFile "$Deposit\qBittorrent.lnk" -Starter "$Env:ProgramFiles\qBittorrent\qbittorrent.exe"
-    Use-CreateShortcut -LnkFile "$Deposit\Epic Games Launcher.lnk" -Starter "${Env:ProgramFiles(x86)}\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
-    Use-CreateShortcut -LnkFile "$Deposit\Steam.lnk" -Starter "${Env:ProgramFiles(x86)}\Steam\Steam.exe"
+    # Use-RemoveDesktop -Pattern "Microsoft Edge*.lnk"
+    # $Deposit = "$Env:UserProfile\Desktop"
+    # Use-CreateShortcut -LnkFile "$Deposit\Firefox.lnk" -Starter "$Env:ProgramFiles\Mozilla Firefox\firefox.exe"
+    # Use-CreateShortcut -LnkFile "$Deposit\JDownloader 2.lnk" -Starter "$Env:ProgramFiles\JDownloader\JDownloader2.exe"
+    # Use-CreateShortcut -LnkFile "$Deposit\qBittorrent.lnk" -Starter "$Env:ProgramFiles\qBittorrent\qbittorrent.exe"
+    # Use-CreateShortcut -LnkFile "$Deposit\Epic Games Launcher.lnk" -Starter "${Env:ProgramFiles(x86)}\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
+    # Use-CreateShortcut -LnkFile "$Deposit\Steam.lnk" -Starter "${Env:ProgramFiles(x86)}\Steam\Steam.exe"
 
 }
 
