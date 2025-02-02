@@ -9,10 +9,10 @@ Windows automatic setup for gamers.
 - Update Windows
 - Update Amd
 - Update Nvidia
+- Update Epic Games Launcher
 - Update Firefox
 - Update Jdownloader
 - Update Qbittorrent
-- Update Epic Games Launcher
 - Update Steam
 - Update Xmouser
 - Update Appearance

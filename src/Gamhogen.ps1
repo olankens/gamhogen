@@ -328,16 +328,14 @@ Function Update-Steam {
 
 Function Update-Xmouser {
 
-    # TODO: Add-AppxPackage without progress
     $Deposit = "$Env:LocalAppData\Packages\Xmouser"
     If (-Not (Test-Path -Path "$Deposit")) { New-Item -ItemType Directory -Path "$Deposit" }
-
     Set-DeveloperMode -Enabled $True
     $Address = "https://apps.microsoft.com/detail/9n826ps2qqpf"
     $Archive = Get-FromMicrosoftStore -Payload "$Address"
     $Extract = Use-ExpandArchive -Archive "$Archive" -Deposit "$Deposit"
-    Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI
-    Add-AppxPackage -Register (Join-Path "$Extract" "AppxManifest.xml") -Force | Out-Null
+    Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI ; Start-Sleep -Seconds 5
+    Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") | Out-Null ; Start-Sleep -Seconds 5
     Set-DeveloperMode -Enabled $False
     Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
 
@@ -360,14 +358,14 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
     "
 
     $Members = @(
-        { Update-Windows },
-        { Update-Amd },
-        { Update-Nvidia },
-        { Update-Firefox },
-        { Update-Jdownloader },
-        { Update-Qbittorrent },
-        { Update-EpicGamesLauncher },
-        { Update-Steam },
+        # { Update-Windows },
+        # { Update-Amd },
+        # { Update-Nvidia },
+        # { Update-EpicGamesLauncher },
+        # { Update-Firefox },
+        # { Update-Jdownloader },
+        # { Update-Qbittorrent },
+        # { Update-Steam },
         { Update-Xmouser },
         { Update-Appearance }
     )
