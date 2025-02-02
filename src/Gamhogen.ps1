@@ -1,51 +1,7 @@
-Function Get-FromGithub {
-
-    Param (
-        [Parameter(Mandatory = $True)] [String] $Payload,
-        [Parameter(Mandatory = $True)] [String] $Pattern
-    )
-
-    $Results = (Invoke-WebRequest "$Payload" | ConvertFrom-Json).assets
-    $Address = $Results | Where-Object { $_.browser_download_url -Like "$Pattern" } | Select-Object -ExpandProperty browser_download_url
-    $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
-    (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
-    Return "$Fetched"
-
-}
-
-Function Get-FromMicrosoftStore {
-
-    Param (
-        [Parameter(Mandatory = $True)] [String] $Payload
-    )
-
-    $Results = (Invoke-WebRequest "https://api.github.com/repos/mjishnu/alt-app-installer-cli/releases/latest" | ConvertFrom-Json).assets
-    $Address = $Results | Where-Object { $_.browser_download_url -Like "*.exe" } | Select-Object -ExpandProperty browser_download_url
-    $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
-    (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
-    $Deposit = Join-Path "$([IO.Path]::GetTempPath())" "downloads"
-    Remove-Item -Path "$Deposit" -Recurse -Force -EA SI
-    Start-Process "$Fetched" "`"$Payload`" -d" -WindowStyle Minimized -Wait -WorkingDirectory "$([IO.Path]::GetTempPath())"
-    $Element = (Get-ChildItem -Path "$Deposit" -File | Select-Object -First 1).FullName
-    Return "$Element"
-
-}
-
-Function Set-DeveloperMode {
-
-    Param (
-        [Parameter(Mandatory = $True)] [Bool] $Enabled
-    )
-
-    Invoke-Gsudo {
-        New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name AllowDevelopmentWithoutDevLicense -Value $(If ($Using:Enabled) { 1 } Else { 0 }) -Force -EA SI | Out-Null
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name AllowDevelopmentWithoutDevLicense -Value $(If ($Using:Enabled) { 1 } Else { 0 }) -EA SI | Out-Null
-    }
-    
-}
-
 Function Update-Appearance {
 
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Bags\1\Desktop" -Name "IconSize" -value 56
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Bags\1\Desktop" -Name "FFLAGS" -Value 1075839525
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0
@@ -59,6 +15,7 @@ Function Update-Appearance {
     Invoke-Gsudo { New-ItemProperty -Path "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value 0 -PropertyType Dword -Force }
     Get-Process -Name explorer | ForEach-Object { $_.Kill() } ; Start-Sleep -Seconds 5
 
+    Use-RemoveDesktop -Pattern "Microsoft Edge*.lnk"
     $Targets = @("Copilot", "Microsoft Edge", "Microsoft Store", "Outlook (new)")
     $Factors = ((New-Object -Com Shell.Application).NameSpace("shell:::{4234d49b-0245-4df3-b780-3893943456e1}").Items() | Where-Object { $_.Name -In $Targets }).Verbs()
     $Factors | Where-Object { $_.Name.replace("&", "") -Match "Unpin from taskbar" } | ForEach-Object { $_.DoIt() }
@@ -71,6 +28,8 @@ Function Update-Appearance {
     If (-Not (Test-Path -Path "$Picture")) { (New-Object Net.WebClient).DownloadFile("$Address", "$Picture") }
     Set-DesktopBackground -Picture "$Picture"
     Set-LockscreenBackground -Picture "$Picture"
+
+    Set-DisplayScaling -Scaling 3
 
 }
 
@@ -335,9 +294,9 @@ Function Update-Xmouser {
     $Archive = Get-FromMicrosoftStore -Payload "$Address"
     $Extract = Use-ExpandArchive -Archive "$Archive" -Deposit "$Deposit"
     Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI ; Start-Sleep -Seconds 5
-    Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") | Out-Null ; Start-Sleep -Seconds 5
+    Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") > $null 2>&1 ; Start-Sleep -Seconds 5
     Set-DeveloperMode -Enabled $False
-    Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
+    # Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
 
 }
 
@@ -358,14 +317,14 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
     "
 
     $Members = @(
-        # { Update-Windows },
-        # { Update-Amd },
-        # { Update-Nvidia },
-        # { Update-EpicGamesLauncher },
-        # { Update-Firefox },
-        # { Update-Jdownloader },
-        # { Update-Qbittorrent },
-        # { Update-Steam },
+        { Update-Windows },
+        { Update-Amd },
+        { Update-Nvidia },
+        { Update-EpicGamesLauncher },
+        { Update-Firefox },
+        { Update-Jdownloader },
+        { Update-Qbittorrent },
+        { Update-Steam },
         { Update-Xmouser },
         { Update-Appearance }
     )
