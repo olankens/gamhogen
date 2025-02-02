@@ -332,8 +332,8 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
 
     $Members = @(
         { Update-Windows },
-        # { Update-Amd },
-        # { Update-Nvidia },
+        { Update-Amd },
+        { Update-Nvidia },
         { Update-EpicGamesLauncher },
         { Update-Firefox },
         { Update-Jdownloader },
