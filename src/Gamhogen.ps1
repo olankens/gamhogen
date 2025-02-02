@@ -7,7 +7,7 @@ Function Update-Appearance {
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value 0
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideIcons" -Value 1
+    # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideIcons" -Value 1
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type Dword -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Type Dword -Value 0
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type Dword -Value 0
@@ -15,7 +15,6 @@ Function Update-Appearance {
     Invoke-Gsudo { New-ItemProperty -Path "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value 0 -PropertyType Dword -Force }
     Get-Process -Name explorer | ForEach-Object { $_.Kill() } ; Start-Sleep -Seconds 5
 
-    Use-RemoveDesktop -Pattern "Microsoft Edge*.lnk"
     $Targets = @("Copilot", "Microsoft Edge", "Microsoft Store", "Outlook (new)")
     $Factors = ((New-Object -Com Shell.Application).NameSpace("shell:::{4234d49b-0245-4df3-b780-3893943456e1}").Items() | Where-Object { $_.Name -In $Targets }).Verbs()
     $Factors | Where-Object { $_.Name.replace("&", "") -Match "Unpin from taskbar" } | ForEach-Object { $_.DoIt() }
@@ -30,6 +29,15 @@ Function Update-Appearance {
     Set-LockscreenBackground -Picture "$Picture"
 
     Set-DisplayScaling -Scaling 3
+
+    $Deposit = "$Env:UserProfile\Desktop"
+
+    Use-RemoveDesktop -Pattern "Microsoft Edge*.lnk"
+    Use-CreateShortcut -LnkFile "$Deposit\Firefox.lnk" -Starter "$Env:ProgramFiles\Mozilla Firefox\firefox.exe"
+    Use-CreateShortcut -LnkFile "$Deposit\JDownloader 2.lnk" -Starter "$Env:ProgramFiles\JDownloader\JDownloader2.exe"
+    Use-CreateShortcut -LnkFile "$Deposit\qBittorrent.lnk" -Starter "$Env:ProgramFiles\qBittorrent\qbittorrent.exe"
+    Use-CreateShortcut -LnkFile "$Deposit\Epic Games Launcher.lnk" -Starter "${Env:ProgramFiles(x86)}\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
+    Use-CreateShortcut -LnkFile "$Deposit\Steam.lnk" -Starter "${Env:ProgramFiles(x86)}\Steam\Steam.exe"
 
 }
 
@@ -296,7 +304,12 @@ Function Update-Xmouser {
     Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI ; Start-Sleep -Seconds 5
     Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") > $null 2>&1 ; Start-Sleep -Seconds 5
     Set-DeveloperMode -Enabled $False
-    # Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
+    Start-Sleep 5 ; Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
+    Start-Sleep 8 ; Get-Process -Name msedge | ForEach-Object { $_.Kill() } 
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ESC}")
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
+    # TODO: Launch Xmouser and enable it
 
 }
 
@@ -318,8 +331,8 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
 
     $Members = @(
         { Update-Windows },
-        { Update-Amd },
-        { Update-Nvidia },
+        # { Update-Amd },
+        # { Update-Nvidia },
         { Update-EpicGamesLauncher },
         { Update-Firefox },
         { Update-Jdownloader },
