@@ -315,6 +315,7 @@ Function Update-Xmouser {
 
 If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
 
+    Start-Sleep -Seconds 5
     $Address = "https://raw.githubusercontent.com/olankens/whelpers/HEAD/src/Whelpers.psm1"
     $Content = ([Scriptblock]::Create((New-Object System.Net.WebClient).DownloadString($Address)))
     New-Module -Name "$Address" -ScriptBlock $Content -EA SI > $Null
