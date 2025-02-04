@@ -311,6 +311,10 @@ Function Update-Xmouser {
     Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ESC}")
     Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
+    # TODO: Change settings
+    # Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Appx
+    # C:\Users\Admin\AppData\Local\Packages\49759WizardSoft.XboxMouse_f9ks63wtk7vcm\LocalCache\Roaming\XboxMouse
+
 }
 
 If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
