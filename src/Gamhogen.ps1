@@ -28,7 +28,7 @@ Function Update-Appearance {
     Set-DesktopBackground -Picture "$Picture"
     Set-LockscreenBackground -Picture "$Picture"
 
-    Set-DisplayScaling -Scaling 3
+    Set-DisplayScaling -Scaling 2
 
 }
 
