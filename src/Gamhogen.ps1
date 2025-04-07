@@ -294,7 +294,7 @@ Function Update-Xmouser {
     $Archive = Get-FromMicrosoftStore -Payload "$Address"
     $Extract = Use-ExpandArchive -Archive "$Archive" -Deposit "$Deposit"
     Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI ; Start-Sleep -Seconds 5
-    Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") > $null 2>&1 ; Start-Sleep -Seconds 5
+    Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") *> $Null 2>&1 ; Start-Sleep -Seconds 5
     Set-DeveloperMode -Enabled $False
 
     Add-Type -AssemblyName System.Windows.Forms
