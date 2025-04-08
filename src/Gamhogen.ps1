@@ -356,13 +356,13 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
 
     $Members = @(
         { Update-Windows },
-        # { Update-Amd },
-        # { Update-Nvidia },
-        # { Update-EpicGamesLauncher },
-        # { Update-Firefox },
-        # { Update-Jdownloader },
-        # { Update-Qbittorrent },
-        # { Update-Steam },
+        { Update-Amd },
+        { Update-Nvidia },
+        { Update-EpicGamesLauncher },
+        { Update-Firefox },
+        { Update-Jdownloader },
+        { Update-Qbittorrent },
+        { Update-Steam },
         { Update-Xmouser },
         { Update-Appearance }
     )
