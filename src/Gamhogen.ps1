@@ -290,7 +290,6 @@ Function Update-Xmouser {
 
     $Deposit = "$Env:LocalAppData\Packages\Xmouser"
     If (-Not (Test-Path -Path "$Deposit")) { New-Item -ItemType Directory -Path "$Deposit" }
-
     Set-DeveloperMode -Enabled $True
     $Address = "https://apps.microsoft.com/detail/9n826ps2qqpf"
     $Archive = Get-FromMicrosoftStore -Payload "$Address"
@@ -306,6 +305,30 @@ Function Update-Xmouser {
     Start-Sleep 8 ; Get-Process -Name msedge | ForEach-Object { $_.Kill() } 
     Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ESC}")
     Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
+    $Content += 'using System;'
+    $Content += 'using System.Runtime.InteropServices;'
+    $Content += 'public class Keyboard {'
+    $Content += '    [DllImport("user32.dll", SetLastError = true)]'
+    $Content += '    public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);'
+    $Content += '    public const int KEYEVENTF_EXTENDEDKEY = 0x0001;'
+    $Content += '    public const int KEYEVENTF_KEYUP = 0x0002;'
+    $Content += '    public static void KeyDown(byte keyCode) {'
+    $Content += '        keybd_event(keyCode, 0, KEYEVENTF_EXTENDEDKEY, UIntPtr.Zero);'
+    $Content += '    }'
+    $Content += '    public static void KeyUp(byte keyCode) {'
+    $Content += '        keybd_event(keyCode, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, UIntPtr.Zero);'
+    $Content += '    }'
+    $Content += '}'
+    Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
+    Start-Sleep 2 ;[Keyboard]::KeyDown(0x5B) ; [Keyboard]::KeyDown(0x42) ; [Keyboard]::KeyUp(0x42) ; [Keyboard]::KeyUp(0x5B)
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{LEFT 3}")
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{UP 6}")
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+    Start-Sleep 2 ;[Keyboard]::KeyDown(0x5B) ; [Keyboard]::KeyDown(0x42) ; [Keyboard]::KeyUp(0x42) ; [Keyboard]::KeyUp(0x5B)
+    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
 }
 
