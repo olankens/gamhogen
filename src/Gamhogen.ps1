@@ -288,6 +288,7 @@ Function Update-Xmouser {
 
     If (-Not (Get-AppxPackage | Where-Object { $_.Name -Like "*WindowsStore*" })) { Return }
 
+    $Present = $Null -Ne (Get-AppxPackage | Where-Object { $_.Name -Like "*XboxMouse*" })
     $Deposit = "$Env:LocalAppData\Packages\Xmouser"
     If (-Not (Test-Path -Path "$Deposit")) { New-Item -ItemType Directory -Path "$Deposit" }
     Set-DeveloperMode -Enabled $True
@@ -300,35 +301,39 @@ Function Update-Xmouser {
     Start-Sleep -Seconds 5 ; Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -Command `$ErrorActionPreference='Stop'; $Command" -WindowStyle Hidden -Wait
     Start-Sleep -Seconds 5 ; Set-DeveloperMode -Enabled $False
 
-    Add-Type -AssemblyName System.Windows.Forms
-    Start-Sleep 5 ; Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
-    Start-Sleep 8 ; Get-Process -Name msedge | ForEach-Object { $_.Kill() } 
-    Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ESC}")
-    Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+    If (-Not $Present) {
+        Add-Type -AssemblyName System.Windows.Forms
+        Start-Sleep 5 ; Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
+        Start-Sleep 8 ; Get-Process -Name msedge | ForEach-Object { $_.Kill() } 
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ESC}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+    }
 
-    $Content += 'using System;'
-    $Content += 'using System.Runtime.InteropServices;'
-    $Content += 'public class Keyboard {'
-    $Content += '    [DllImport("user32.dll", SetLastError = true)]'
-    $Content += '    public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);'
-    $Content += '    public const int KEYEVENTF_EXTENDEDKEY = 0x0001;'
-    $Content += '    public const int KEYEVENTF_KEYUP = 0x0002;'
-    $Content += '    public static void KeyDown(byte keyCode) {'
-    $Content += '        keybd_event(keyCode, 0, KEYEVENTF_EXTENDEDKEY, UIntPtr.Zero);'
-    $Content += '    }'
-    $Content += '    public static void KeyUp(byte keyCode) {'
-    $Content += '        keybd_event(keyCode, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, UIntPtr.Zero);'
-    $Content += '    }'
-    $Content += '}'
-    Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
-    Start-Sleep 2 ;[Keyboard]::KeyDown(0x5B) ; [Keyboard]::KeyDown(0x42) ; [Keyboard]::KeyUp(0x42) ; [Keyboard]::KeyUp(0x5B)
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{LEFT 3}")
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{UP 6}")
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-    Start-Sleep 2 ;[Keyboard]::KeyDown(0x5B) ; [Keyboard]::KeyDown(0x42) ; [Keyboard]::KeyUp(0x42) ; [Keyboard]::KeyUp(0x5B)
-    Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+    If (-Not $Present) {
+        $Content += 'using System;'
+        $Content += 'using System.Runtime.InteropServices;'
+        $Content += 'public class Keyboard {'
+        $Content += '    [DllImport("user32.dll", SetLastError = true)]'
+        $Content += '    public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);'
+        $Content += '    public const int KEYEVENTF_EXTENDEDKEY = 0x0001;'
+        $Content += '    public const int KEYEVENTF_KEYUP = 0x0002;'
+        $Content += '    public static void KeyDown(byte keyCode) {'
+        $Content += '        keybd_event(keyCode, 0, KEYEVENTF_EXTENDEDKEY, UIntPtr.Zero);'
+        $Content += '    }'
+        $Content += '    public static void KeyUp(byte keyCode) {'
+        $Content += '        keybd_event(keyCode, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, UIntPtr.Zero);'
+        $Content += '    }'
+        $Content += '}'
+        Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
+        Start-Sleep 2 ; [Keyboard]::KeyDown(0x5B) ; [Keyboard]::KeyDown(0x42) ; [Keyboard]::KeyUp(0x42) ; [Keyboard]::KeyUp(0x5B)
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{LEFT 3}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{UP 6}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 2 ; [Keyboard]::KeyDown(0x5B) ; [Keyboard]::KeyDown(0x42) ; [Keyboard]::KeyUp(0x42) ; [Keyboard]::KeyUp(0x5B)
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+    }
 
 }
 
