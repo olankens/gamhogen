@@ -294,7 +294,10 @@ Function Update-Xmouser {
     $Archive = Get-FromMicrosoftStore -Payload "$Address"
     $Extract = Use-ExpandArchive -Archive "$Archive" -Deposit "$Deposit"
     Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI ; Start-Sleep -Seconds 5
-    (Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") -ProgressAction SilentlyContinue) | Out-Null ; Start-Sleep -Seconds 5
+    # Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") ; Start-Sleep -Seconds 5
+    $XmlFile = (Join-Path $Deposit "AppxManifest.xml").Replace("'", "''")
+    $Command = "Add-AppxPackage -Register '$XmlFile'"
+    Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -Command `$ErrorActionPreference='Stop'; $Command" -WindowStyle Hidden
     Set-DeveloperMode -Enabled $False
 
     Add-Type -AssemblyName System.Windows.Forms
