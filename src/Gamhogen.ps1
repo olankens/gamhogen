@@ -286,7 +286,7 @@ Function Update-Steam {
 
 Function Update-Xmouser {
 
-    # TODO: Return if M$ Store not installed
+    If (-Not (Get-AppxPackage | Where-Object { $_.Name -Like "*WindowsStore*" })) { Return }
 
     $Deposit = "$Env:LocalAppData\Packages\Xmouser"
     If (-Not (Test-Path -Path "$Deposit")) { New-Item -ItemType Directory -Path "$Deposit" }
@@ -295,12 +295,11 @@ Function Update-Xmouser {
     $Address = "https://apps.microsoft.com/detail/9n826ps2qqpf"
     $Archive = Get-FromMicrosoftStore -Payload "$Address"
     $Extract = Use-ExpandArchive -Archive "$Archive" -Deposit "$Deposit"
-    Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI ; Start-Sleep -Seconds 5
-    # Add-AppxPackage -Register (Join-Path "$Deposit" "AppxManifest.xml") ; Start-Sleep -Seconds 5
+    Remove-Item -Path (Join-Path "$Extract" "AppxSignature.p7x") -EA SI
     $XmlFile = (Join-Path $Deposit "AppxManifest.xml").Replace("'", "''")
     $Command = "Add-AppxPackage -Register '$XmlFile'"
-    Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -Command `$ErrorActionPreference='Stop'; $Command" -WindowStyle Hidden -Wait
-    Set-DeveloperMode -Enabled $False
+    Start-Sleep -Seconds 5 ; Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -Command `$ErrorActionPreference='Stop'; $Command" -WindowStyle Hidden -Wait
+    Start-Sleep -Seconds 5 ; Set-DeveloperMode -Enabled $False
 
     Add-Type -AssemblyName System.Windows.Forms
     Start-Sleep 5 ; Start-Process "Shell:AppsFolder\$(Get-StartApps "Xmouser" | Select-Object -ExpandProperty AppId)"
