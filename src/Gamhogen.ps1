@@ -359,7 +359,7 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
         { Update-Amd },
         { Update-Nvidia },
         { Update-EpicGamesLauncher },
-        { Update-Firefox },
+        # { Update-Firefox },
         { Update-Jdownloader },
         { Update-Qbittorrent },
         { Update-Steam },
