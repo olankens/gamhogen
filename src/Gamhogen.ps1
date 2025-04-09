@@ -64,24 +64,61 @@ Function Update-Chromium {
         Add-Type -AssemblyName System.Windows.Forms
         New-Item "$Deposit" -ItemType Directory -EA SI
         Start-Process "$Starter" "--lang=en --start-maximized"
-        Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("^l")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("chrome://settings/")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("before downloading")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}" * 3)
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("$Deposit")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
-        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 12 ; [Windows.Forms.SendKeys]::SendWait("^l")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://settings/")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("before downloading")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}" * 3)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("$Deposit")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
-        # $Address = "https://api.github.com/repos/NeverDecaf/chromium-web-store/releases/latest"
-        # $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
-        # $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
-        # Update-ChromiumExtension "$Address"
-        # Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
+        Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://flags/")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("custom-ntp")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}" * 4)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^a")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("$Startup")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}" * 2)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
+        Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://flags/")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("extension-mime-request-handling")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}" * 5)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}" * 2)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
+        Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://flags/")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("show-avatar-button")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}" * 5)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}" * 3)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+
+        Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^+b")
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+
+        $Address = "https://api.github.com/repos/NeverDecaf/chromium-web-store/releases/latest"
+        $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
+        $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
+        Update-ChromiumExtension "$Address"
+        Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
 
     Remove-Desktop "Chromium*.lnk"
