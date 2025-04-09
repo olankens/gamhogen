@@ -287,7 +287,7 @@ Function Update-System {
     Invoke-Gsudo { Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Value 1 }
     If (-Not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { Install-Module -Name PSWindowsUpdate -Force -Scope CurrentUser }
     Import-Module PSWindowsUpdate ; Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot
-    
+
     Use-ActiveWindows
     Set-Hostname -Payload "GAMHOGEN"
     Set-AudioVolume -Payload 40
