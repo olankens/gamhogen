@@ -60,7 +60,7 @@ Function Update-Chromium {
         Invoke-Gsudo { Start-Process "$Using:Fetched" "--system-level --do-not-launch-chrome" -Wait }
     }
 
-    If (-Not $Present -Or $True) { # TODO: Remove dummy
+    If (-Not $Present) {
         Add-Type -AssemblyName System.Windows.Forms
         New-Item "$Deposit" -ItemType Directory -EA SI
         Start-Process "$Starter" "--lang=en --start-maximized"
@@ -118,9 +118,9 @@ Function Update-Chromium {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
         $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
         Update-ChromiumExtension "$Address"
-        
-        Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
+
+    Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
 
     Remove-Desktop "Chromium*.lnk"
 
