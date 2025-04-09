@@ -40,8 +40,96 @@ Function Update-Appearance {
 
 Function Update-Chromium {
 
-    Return
+    # $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
+    $Current = Expand-Version "*chromium*"
+    $Present = $Current -Ne "0.0.0.0"
+    $Address = "https://api.github.com/repos/macchrome/winchrome/releases/latest"
+    $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).tag_name , "[\d.]+").Value
+    $Updated = $Present -And [Version] $Current.Replace(".0", "") -Ge [Version] "$Version"
 
+    If (-Not $Updated) {
+        $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
+        $Address = $Results.Where( { $_.browser_download_url -Like "*installer.exe" } ).browser_download_url
+        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+        (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
+        Invoke-Gsudo { Start-Process "$Using:Fetched" "--system-level --do-not-launch-chrome" -Wait }
+    }
+
+    If (-Not $Present) {
+        $Address = "https://api.github.com/repos/NeverDecaf/chromium-web-store/releases/latest"
+        $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
+        $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
+        Update-ChromiumExtension "$Address"
+
+        Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm"
+    }
+
+    Remove-Desktop "Chromium*.lnk"
+
+}
+
+Function Update-ChromiumExtension {
+
+    Param (
+        [String] $Payload
+    )
+
+    $Package = $Null
+    $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
+    If (Test-path "$Starter") {
+        If ($Payload -Like "http*") {
+            $Address = "$Payload"
+            $Package = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+            (New-Object Net.WebClient).DownloadFile("$Address", "$Package")
+        }
+        Else {
+            $Version = Try { (Get-Item "$Starter" -EA SI).VersionInfo.FileVersion.ToString() } Catch { "0.0.0.0" }
+            $Address = "https://clients2.google.com/service/update2/crx?response=redirect&acceptformat=crx2,crx3"
+            $Address = "${Address}&prodversion=${Version}&x=id%3D${Payload}%26installsource%3Dondemand%26uc"
+            $Package = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+            (New-Object Net.WebClient).DownloadFile("$Address", "$Package")
+        }
+        If ($Null -Ne $Package -And (Test-Path "$Package")) {
+            Add-Type -AssemblyName System.Windows.Forms
+            If ($Package -Like "*.zip") {
+                $Deposit = "$Env:ProgramFiles\Chromium\Unpacked\$($Payload.Split("/")[4])"
+                $Present = Test-Path "$Deposit"
+                Invoke-Gsudo { New-Item "$Using:Deposit" -ItemType Directory -EA SI }
+                # Update-Nanazip ; $Extract = [IO.Directory]::CreateDirectory("$Env:Temp\$([Guid]::NewGuid().Guid)").FullName
+                # Start-Process "7z.exe" "x `"$Package`" -o`"$Extract`" -y -bso0 -bsp0" -WindowStyle Hidden -Wait
+                $Extract = Use-ExpandArchive "$Package"
+                $Topmost = (Get-ChildItem -Path "$Extract" -Directory | Select-Object -First 1).FullName
+                Invoke-Gsudo { Copy-Item -Path "$Using:Topmost\*" -Destination "$Using:Deposit" -Recurse -Force }
+                If ($Present) { Return }
+                Start-Process "$Starter" "--lang=en --start-maximized"
+                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("^l")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("$Deposit")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+                Start-Process "$Starter" "--lang=en --start-maximized"
+                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("^l")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+            }
+            Else {
+                Start-Process "$Starter" "`"$Package`" --start-maximized --lang=en"
+                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
+                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+            }
+        }
+    }
 }
 
 Function Update-EpicGamesLauncher {
