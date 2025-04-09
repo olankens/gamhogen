@@ -40,7 +40,12 @@ Function Update-Appearance {
 
 Function Update-Chromium {
 
-    # $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
+    Param (
+        [String] $Deposit = "$Env:UserProfile\Downloads\DDL",
+        [String] $Startup = "about:blank"
+    )
+
+    $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
     $Current = Get-FileVersion "*chromium*"
     $Present = $Current -Ne "0.0"
     $Address = "https://api.github.com/repos/macchrome/winchrome/releases/latest"
@@ -55,13 +60,28 @@ Function Update-Chromium {
         Invoke-Gsudo { Start-Process "$Using:Fetched" "--system-level --do-not-launch-chrome" -Wait }
     }
 
-    If (-Not $Present) {
-        $Address = "https://api.github.com/repos/NeverDecaf/chromium-web-store/releases/latest"
-        $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
-        $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
-        Update-ChromiumExtension "$Address"
+    If (-Not $Present -Or $True) {
+        Add-Type -AssemblyName System.Windows.Forms
+        New-Item "$Deposit" -ItemType Directory -EA SI
+        Start-Process "$Starter" "--lang=en --start-maximized"
+        Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("^l")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("chrome://settings/")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("before downloading")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}" * 3)
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("$Deposit")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+        Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
 
-        Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
+        # $Address = "https://api.github.com/repos/NeverDecaf/chromium-web-store/releases/latest"
+        # $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
+        # $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
+        # Update-ChromiumExtension "$Address"
+        # Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
 
     Remove-Desktop "Chromium*.lnk"
