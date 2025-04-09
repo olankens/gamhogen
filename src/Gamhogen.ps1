@@ -42,10 +42,10 @@ Function Update-Chromium {
 
     # $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
     $Current = Get-FileVersion "*chromium*"
-    $Present = $Current -Ne "0.0.0.0"
+    $Present = $Current -Ne "0.0"
     $Address = "https://api.github.com/repos/macchrome/winchrome/releases/latest"
     $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).tag_name , "[\d.]+").Value
-    $Updated = $Present -And [Version] $Current.Replace(".0", "") -Ge [Version] "$Version"
+    $Updated = $Present -And [Version] $Current -Ge [Version] "$Version"
 
     If (-Not $Updated) {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
@@ -61,7 +61,7 @@ Function Update-Chromium {
         $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
         Update-ChromiumExtension "$Address"
 
-        Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm"
+        Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
 
     Remove-Desktop "Chromium*.lnk"
