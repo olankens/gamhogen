@@ -118,6 +118,7 @@ Function Update-Chromium {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
         $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
         Update-ChromiumExtension "$Address"
+        
         Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
 
@@ -143,7 +144,7 @@ Function Update-ChromiumExtension {
             $Version = Try { (Get-Item "$Starter" -EA SI).VersionInfo.FileVersion.ToString() } Catch { "0.0.0.0" }
             $Address = "https://clients2.google.com/service/update2/crx?response=redirect&acceptformat=crx2,crx3"
             $Address = "${Address}&prodversion=${Version}&x=id%3D${Payload}%26installsource%3Dondemand%26uc"
-            $Package = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
+            $Package = "$Env:Temp\$Payload.crx"
             (New-Object Net.WebClient).DownloadFile("$Address", "$Package")
         }
         If ($Null -Ne $Package -And (Test-Path "$Package")) {
