@@ -157,31 +157,31 @@ Function Update-ChromiumExtension {
                 Invoke-Gsudo { Copy-Item -Path "$Using:Topmost\*" -Destination "$Using:Deposit" -Recurse -Force }
                 If ($Present) { Return }
                 Start-Process "$Starter" "--lang=en --start-maximized"
-                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("^l")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("$Deposit")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("$Deposit")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
                 Start-Process "$Starter" "--lang=en --start-maximized"
-                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("^l")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
             Else {
                 Start-Process "$Starter" "`"$Package`" --start-maximized --lang=en"
-                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
-                Start-Sleep 2 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
-                Start-Sleep 4 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
         }
     }
