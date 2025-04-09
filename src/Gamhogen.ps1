@@ -282,19 +282,14 @@ Function Update-Steam {
 
 Function Update-System {
 
-    # TODO: Hide progress dialogs
-    Invoke-Gsudo { Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Value 0 }
+    $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching"
+    $RegName = "SearchOrderConfig"
+    Invoke-Gsudo { Set-ItemProperty -Path "$Using:RegPath" -Name "$Using:RegName" -Value 0 }
     Update-Amd ; Update-Nvidia
-    Invoke-Gsudo { Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Value 1 }
-    $ProgressPreference = "SilentlyContinue"
-    If (-Not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { Install-Module -Name PSWindowsUpdate -Force -Scope CurrentUser }
-    Import-Module PSWindowsUpdate ; Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot
+    Invoke-Gsudo { Set-ItemProperty -Path "$Using:RegPath" -Name "$Using:RegName" -Value 1 }
 
     Use-ActiveWindows
-    Set-Hostname -Payload "GAMHOGEN"
     Set-AudioVolume -Payload 40
-    Set-TimeZone -Name "Romance Standard Time"
-    Use-ReloadClock
 
 }
 
@@ -368,6 +363,8 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
     +--------------------------------------------------------------------+
     "
 
+    $Country = "Romance Standard Time"
+    $Machine = "GAMHOGEN"
     $Members = @(
         { Update-System },
         { Update-Chromium },
@@ -379,6 +376,10 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
         { Update-Appearance }
     )
 
-    Use-UpdateWrapper -Heading $Heading -Members $Members
+    Use-UpdateWrapper `
+        -Heading $Heading `
+        -Country $Country `
+        -Machine $Machine `
+        -Members $Members
 
 }
