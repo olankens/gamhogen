@@ -454,13 +454,13 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
     $Country = "Romance Standard Time"
     $Machine = "GAMHOGEN"
     $Members = @(
-        { Update-System },
+        # { Update-System },
         { Update-Chromium },
-        { Update-EpicGamesLauncher },
-        { Update-Jdownloader },
-        { Update-Qbittorrent },
-        { Update-Steam },
-        { Update-Xmouser },
+        # { Update-EpicGamesLauncher },
+        # { Update-Jdownloader },
+        # { Update-Qbittorrent },
+        # { Update-Steam },
+        # { Update-Xmouser },
         { Update-Appearance }
     )
 
