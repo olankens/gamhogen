@@ -41,7 +41,7 @@ Function Update-Appearance {
 Function Update-Chromium {
 
     # $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
-    $Current = Expand-Version "*chromium*"
+    $Current = Get-FileVersion "*chromium*"
     $Present = $Current -Ne "0.0.0.0"
     $Address = "https://api.github.com/repos/macchrome/winchrome/releases/latest"
     $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).tag_name , "[\d.]+").Value
