@@ -282,10 +282,12 @@ Function Update-Steam {
 
 Function Update-System {
 
-    # TODO: Remove automatic driver installation
-    # TODO: Launch windows updates
-    Update-Amd
-    Update-Nvidia
+    Invoke-Gsudo { Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Value 0 }
+    Update-Amd ; Update-Nvidia
+    Invoke-Gsudo { Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Value 1 }
+    If (-Not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { Install-Module -Name PSWindowsUpdate -Force -Scope CurrentUser }
+    Import-Module PSWindowsUpdate ; Get-WindowsUpdate -AcceptAll -Install -IgnoreReboot
+    
     Use-ActiveWindows
     Set-Hostname -Payload "GAMHOGEN"
     Set-AudioVolume -Payload 40
