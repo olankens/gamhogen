@@ -9,8 +9,8 @@ Windows automatic setup for gamers.
 - Update System
 - Update Chromium
 - Update Epic Games Launcher
-- Update Jdownloader
-- Update Qbittorrent
+- Update JDownloader
+- Update QBittorrent
 - Update Steam
 - Update Xmouser
 - Update Appearance
