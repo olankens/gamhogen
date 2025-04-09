@@ -117,12 +117,12 @@ Function Update-Chromium {
         $Address = "https://api.github.com/repos/NeverDecaf/chromium-web-store/releases/latest"
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
         $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
-        Update-ChromiumExtension "$Address"
+        Update-ChromiumExtension -Payload "$Address"
+
+        Update-ChromiumExtension -Payload "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
 
-    Update-ChromiumExtension "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
-
-    Remove-Desktop "Chromium*.lnk"
+    Use-RemoveDesktop -Pattern "Chromium*.lnk"
 
 }
 
@@ -181,7 +181,7 @@ Function Update-ChromiumExtension {
             Else {
                 Start-Process "$Starter" "`"$Package`" --start-maximized --lang=en"
                 Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
-                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
         }
