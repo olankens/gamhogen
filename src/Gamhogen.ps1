@@ -95,8 +95,6 @@ Function Update-ChromiumExtension {
                 $Deposit = "$Env:ProgramFiles\Chromium\Unpacked\$($Payload.Split("/")[4])"
                 $Present = Test-Path "$Deposit"
                 Invoke-Gsudo { New-Item "$Using:Deposit" -ItemType Directory -EA SI }
-                # Update-Nanazip ; $Extract = [IO.Directory]::CreateDirectory("$Env:Temp\$([Guid]::NewGuid().Guid)").FullName
-                # Start-Process "7z.exe" "x `"$Package`" -o`"$Extract`" -y -bso0 -bsp0" -WindowStyle Hidden -Wait
                 $Extract = Use-ExpandArchive "$Package"
                 $Topmost = (Get-ChildItem -Path "$Extract" -Directory | Select-Object -First 1).FullName
                 Invoke-Gsudo { Copy-Item -Path "$Using:Topmost\*" -Destination "$Using:Deposit" -Recurse -Force }
@@ -130,6 +128,7 @@ Function Update-ChromiumExtension {
             }
         }
     }
+
 }
 
 Function Update-EpicGamesLauncher {
