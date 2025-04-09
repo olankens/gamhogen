@@ -1,3 +1,9 @@
+Function Update-Amd {
+
+    If ((Get-WmiObject Win32_VideoController).Name -NotLike "*AMD*") { Return $False }
+
+}
+
 Function Update-Appearance {
 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Bags\1\Desktop" -Name "IconSize" -value 56
@@ -32,19 +38,9 @@ Function Update-Appearance {
 
 }
 
-Function Update-Windows {
+Function Update-Chromium {
 
-    Use-ActiveWindows
-    Set-Hostname -Payload "GAMHOGEN"
-    Set-AudioVolume -Payload 40
-    Set-TimeZone -Name "Romance Standard Time"
-    Use-ReloadClock
-
-}
-
-Function Update-Amd {
-
-    If ((Get-WmiObject Win32_VideoController).Name -NotLike "*AMD*") { Return $False }
+    Return
 
 }
 
@@ -284,6 +280,20 @@ Function Update-Steam {
 
 }
 
+Function Update-System {
+
+    # TODO: Remove automatic driver installation
+    # TODO: Launch windows updates
+    Update-Amd
+    Update-Nvidia
+    Use-ActiveWindows
+    Set-Hostname -Payload "GAMHOGEN"
+    Set-AudioVolume -Payload 40
+    Set-TimeZone -Name "Romance Standard Time"
+    Use-ReloadClock
+
+}
+
 Function Update-Xmouser {
 
     If (-Not (Get-AppxPackage | Where-Object { $_.Name -Like "*WindowsStore*" })) { Return }
@@ -355,11 +365,9 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
     "
 
     $Members = @(
-        { Update-Windows },
-        { Update-Amd },
-        { Update-Nvidia },
+        { Update-System },
+        { Update-Chromium },
         { Update-EpicGamesLauncher },
-        # { Update-Firefox },
         { Update-Jdownloader },
         { Update-Qbittorrent },
         { Update-Steam },
