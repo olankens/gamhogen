@@ -60,7 +60,7 @@ Function Update-Chromium {
         Invoke-Gsudo { Start-Process "$Using:Fetched" "--system-level --do-not-launch-chrome" -Wait }
     }
 
-    If (-Not $Present -Or $True) {
+    If (-Not $Present -Or $True) { # TODO: Remove dummy
         Add-Type -AssemblyName System.Windows.Forms
         New-Item "$Deposit" -ItemType Directory -EA SI
         Start-Process "$Starter" "--lang=en --start-maximized"
