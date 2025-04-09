@@ -6,9 +6,7 @@ Windows automatic setup for gamers.
 
 # <samp>FEATURES</samp>
 
-- Update Windows
-- Update Amd
-- Update Nvidia
+- Update System
 - Update Chromium
 - Update Jdownloader
 - Update Qbittorrent
