@@ -48,13 +48,13 @@ Function Update-Chromium {
     $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
     $Current = Get-FileVersion "*chromium*"
     $Present = $Current -Ne "0.0"
-    $Address = "https://api.github.com/repos/macchrome/winchrome/releases/latest"
+    $Address = "https://api.github.com/repos/ungoogled-software/ungoogled-chromium-windows/releases/latest"
     $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).tag_name , "[\d.]+").Value
     $Updated = $Present -And [Version] $Current -Ge [Version] "$Version"
 
     If (-Not $Updated) {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
-        $Address = $Results.Where( { $_.browser_download_url -Like "*installer.exe" } ).browser_download_url
+        $Address = $Results.Where( { $_.browser_download_url -Like "*installer_x64.exe" } ).browser_download_url
         $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "$Using:Fetched" "--system-level --do-not-launch-chrome" -Wait }
