@@ -45,13 +45,13 @@ Function Update-Chromium {
         [String] $Startup = "about:blank"
     )
 
-    $Content += 'using System;'
-    $Content += 'using System.Runtime.InteropServices;'
-    $Content += 'public class User32 {'
-    $Content += '    [DllImport("user32.dll", SetLastError = true)]'
-    $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
-    $Content += '}'
-    Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
+    # $Content += 'using System;'
+    # $Content += 'using System.Runtime.InteropServices;'
+    # $Content += 'public class User32 {'
+    # $Content += '    [DllImport("user32.dll", SetLastError = true)]'
+    # $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
+    # $Content += '}'
+    # Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
     Add-Type -AssemblyName System.Windows.Forms
 
     $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
@@ -72,7 +72,7 @@ Function Update-Chromium {
     If (-Not $Present) {
         New-Item "$Deposit" -ItemType Directory -EA SI
         $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-        Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+        Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://settings/")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -141,13 +141,13 @@ Function Update-ChromiumExtension {
         [String] $Payload
     )
 
-    $Content += 'using System;'
-    $Content += 'using System.Runtime.InteropServices;'
-    $Content += 'public class User32 {'
-    $Content += '    [DllImport("user32.dll", SetLastError = true)]'
-    $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
-    $Content += '}'
-    Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
+    # $Content += 'using System;'
+    # $Content += 'using System.Runtime.InteropServices;'
+    # $Content += 'public class User32 {'
+    # $Content += '    [DllImport("user32.dll", SetLastError = true)]'
+    # $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
+    # $Content += '}'
+    # Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
     Add-Type -AssemblyName System.Windows.Forms
 
     $Package = $Null
@@ -175,7 +175,7 @@ Function Update-ChromiumExtension {
                 Invoke-Gsudo { Copy-Item -Path "$Using:Topmost\*" -Destination "$Using:Deposit" -Recurse -Force }
                 If ($Present) { Return }
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -189,7 +189,7 @@ Function Update-ChromiumExtension {
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -199,7 +199,7 @@ Function Update-ChromiumExtension {
             }
             Else {
                 $Process = Start-Process "$Starter" "`"$Package`" --lang=en --start-maximized" -PassThru
-                Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
                 Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
