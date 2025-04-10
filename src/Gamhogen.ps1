@@ -46,7 +46,7 @@ Function Update-Chromium {
         [String] $Startup = "about:blank"
     )
 
-    # Handle definitions
+    # Handle dependencies
     $Content += 'using System;'
     $Content += 'using System.Runtime.InteropServices;'
     $Content += 'public class User32 {'
@@ -145,7 +145,7 @@ Function Update-ChromiumExtension {
         [String] $Payload
     )
 
-    # Handle definitions
+    # Handle dependencies
     $Content += 'using System;'
     $Content += 'using System.Runtime.InteropServices;'
     $Content += 'public class User32 {'
