@@ -77,7 +77,7 @@ Function Update-Chromium {
     If (-Not $Present) {
         New-Item "$Deposit" -ItemType Directory -EA SI
         $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-        Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+        Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://settings/")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -181,7 +181,7 @@ Function Update-ChromiumExtension {
                 Invoke-Gsudo { Copy-Item -Path "$Using:Topmost\*" -Destination "$Using:Deposit" -Recurse -Force }
                 If ($Present) { Return }
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -195,7 +195,7 @@ Function Update-ChromiumExtension {
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -205,7 +205,7 @@ Function Update-ChromiumExtension {
             }
             Else {
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
                 Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
