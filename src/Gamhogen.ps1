@@ -227,78 +227,6 @@ Function Update-EpicGamesLauncher {
 
 }
 
-Function Update-Firefox {
-
-    $Current = Get-FileVersion "$Env:ProgramFiles\Mozilla Firefox\firefox.exe"
-    $Address = "https://raw.githubusercontent.com/ScoopInstaller/Extras/HEAD/bucket/firefox.json"
-    $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).version , "[\d.]+").Value
-    $Updated = [Version] "$Current" -Ge [Version] "$Version"
-
-    If (-Not $Updated) {
-        $Address = "https://download.mozilla.org/?product=firefox-msi-latest-ssl&os=win64&lang=en-US"
-        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "FirefoxSetup.msi"
-        (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
-        Invoke-Gsudo { Start-Process "msiexec" "/i `"$Using:Fetched`" /qn DESKTOP_SHORTCUT=false INSTALL_MAINTENANCE_SERVICE=false" -Wait }
-    }
-
-    New-Item -ItemType Directory -Path "$Env:ProgramFiles\Mozilla Firefox\distribution" -Force
-    $Configs = "$Env:ProgramFiles\Mozilla Firefox\distribution\policies.json"
-    $Content = '
-    {
-        "policies": {
-            "DisablePocket": true,
-            "DisableFirefoxAccounts": true,
-            "DisableFirefoxStudies": true,
-            "DisableTelemetry": true,
-            "DisplayMenuBar": "never",
-            "DefaultDownloadDirectory": "${home}\\Downloads",
-            "NoDefaultBookmarks": true,
-            "NewTabPage": false,
-            "ExtensionSettings": {
-                "uBlock0@raymondhill.net": {
-                    "installation_mode": "normal_installed",
-                    "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
-                }
-            },
-            "FirefoxHome": {
-                "Search": false,
-                "TopSites": false,
-                "Highlights": false,
-                "Pocket": false,
-                "Snippets": false,
-                "Locked": false
-            },
-            "Homepage": {
-                "URL": "about:blank",
-                "Locked": false,
-                "StartPage": "none"
-            }
-        }
-    }
-    '
-    $Content | ConvertFrom-Json | ConvertTo-Json -Compress | Set-Content $Configs -Force
-
-}
-
-Function Update-Heroic {
-
-    $Current = Get-FileVersion "$Env:LocalAppData\Programs\heroic\Heroic.exe"
-    $Address = "https://api.github.com/repos/Heroic-Games-Launcher/HeroicGamesLauncher/releases/latest"
-    $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).tag_name , "[\d.]+").Value
-    $Updated = [Version] "$Current" -Ge [Version] "$Version"
-
-    If (-Not $Updated) {
-        $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
-        $Address = $Results.Where( { $_.browser_download_url -Like "*Setup-x64.exe" } ).browser_download_url
-        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
-        (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
-        Invoke-Gsudo { Start-Process "$Using:Fetched" "/S" -Wait }
-    }
-
-    Use-RemoveDesktop -Pattern "Heroic*.lnk"
-
-}
-
 Function Update-Hydra {
 
     $Current = Get-FileVersion "$Env:LocalAppData\Programs\Hydra\Hydra.exe"
@@ -364,12 +292,6 @@ Function Update-Jdownloader {
     }
 
     Use-RemoveDesktop -Pattern "JDownloader*.lnk"
-
-}
-
-Function Update-Nanazip {
-
-    Use-UpdateNanazip
 
 }
 
@@ -534,6 +456,7 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
         { Update-System },
         { Update-Chromium },
         { Update-EpicGamesLauncher },
+        { Update-Hydra },
         { Update-Jdownloader },
         { Update-Qbittorrent },
         { Update-Steam },
