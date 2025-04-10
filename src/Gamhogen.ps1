@@ -45,13 +45,6 @@ Function Update-Chromium {
         [String] $Startup = "about:blank"
     )
 
-    # $Content += 'using System;'
-    # $Content += 'using System.Runtime.InteropServices;'
-    # $Content += 'public class User32 {'
-    # $Content += '    [DllImport("user32.dll", SetLastError = true)]'
-    # $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
-    # $Content += '}'
-    # Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
     Add-Type -AssemblyName System.Windows.Forms
 
     $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
@@ -141,13 +134,6 @@ Function Update-ChromiumExtension {
         [String] $Payload
     )
 
-    # $Content += 'using System;'
-    # $Content += 'using System.Runtime.InteropServices;'
-    # $Content += 'public class User32 {'
-    # $Content += '    [DllImport("user32.dll", SetLastError = true)]'
-    # $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
-    # $Content += '}'
-    # Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
     Add-Type -AssemblyName System.Windows.Forms
 
     $Package = $Null
