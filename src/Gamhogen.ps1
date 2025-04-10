@@ -71,8 +71,8 @@ Function Update-Chromium {
 
     If (-Not $Present) {
         New-Item "$Deposit" -ItemType Directory -EA SI
-        $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-        Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
+        Start-Sleep 2 ; $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
+        Start-Sleep 8 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://settings/")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -174,8 +174,8 @@ Function Update-ChromiumExtension {
                 $Topmost = (Get-ChildItem -Path "$Extract" -Directory | Select-Object -First 1).FullName
                 Invoke-Gsudo { Copy-Item -Path "$Using:Topmost\*" -Destination "$Using:Deposit" -Recurse -Force }
                 If ($Present) { Return }
-                $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
+                Start-Sleep 2 ; $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
+                Start-Sleep 8 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
@@ -188,7 +188,7 @@ Function Update-ChromiumExtension {
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
-                $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
+                Start-Sleep 8 ; $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
                 Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
@@ -198,8 +198,8 @@ Function Update-ChromiumExtension {
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
             Else {
-                $Process = Start-Process "$Starter" "`"$Package`" --lang=en --start-maximized" -PassThru
-                Start-Sleep 12 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
+                Start-Sleep 2 ; $Process = Start-Process "$Starter" "`"$Package`" --lang=en --start-maximized" -PassThru
+                Start-Sleep 8 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
                 Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
