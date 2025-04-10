@@ -121,10 +121,9 @@ Function Update-Chromium {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
         $Address = $Results.Where( { $_.browser_download_url -Like "*.crx" } ).browser_download_url
         Update-ChromiumExtension -Payload "$Address"
-
-        Update-ChromiumExtension -Payload "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
 
+    Update-ChromiumExtension -Payload "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     Use-RemoveDesktop -Pattern "Chromium*.lnk"
 
 }
@@ -187,10 +186,13 @@ Function Update-ChromiumExtension {
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
             Else {
-                Start-Sleep 2 ; $Process = Start-Process "$Starter" "`"$Package`" --lang=en --start-maximized" -PassThru
+                Start-Sleep 2 ; $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
                 While ($Process.MainWindowHandle -Eq 0) { Start-Sleep -Milliseconds 500; $Process.Refresh() }
                 Start-Sleep 2 ; [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
-                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("$Package")
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
+                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
                 Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
