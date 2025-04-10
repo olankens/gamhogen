@@ -54,18 +54,17 @@ Function Update-Chromium {
 
     If (-Not $Updated) {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
-        $Address = $Results.Where( { $_.browser_download_url -Like "*installer_x64.exe" } ).browser_download_url
+        $Pattern = If ($Env:PROCESSOR_ARCHITECTURE -Match "^ARM") { "*installer_arm64.exe" } Else { "*installer_x64.exe" }
+        $Address = $Results.Where( { $_.browser_download_url -Like "$Pattern" } ).browser_download_url
         $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "$Using:Fetched" "--system-level --do-not-launch-chrome" -Wait }
     }
 
     If (-Not $Present) {
-        Add-Type -AssemblyName System.Windows.Forms
-        Add-Type '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);'
-
         New-Item "$Deposit" -ItemType Directory -EA SI
-        
+        Add-Type -AssemblyName System.Windows.Forms
+        Try { Add-Type '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);' -Name WinAPI -Namespace User32 } Catch {}
         $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
         [User32]::SetForegroundWindow($Process.MainWindowHandle)
         Start-Sleep 12 ; [Windows.Forms.SendKeys]::SendWait("^l")
@@ -153,7 +152,7 @@ Function Update-ChromiumExtension {
         }
         If ($Null -Ne $Package -And (Test-Path "$Package")) {
             Add-Type -AssemblyName System.Windows.Forms
-            Add-Type '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);'
+            Try { Add-Type '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);' -Name WinAPI -Namespace User32 } Catch {}
             If ($Package -Like "*.zip") {
                 $Deposit = "$Env:ProgramFiles\Chromium\Unpacked\$($Payload.Split("/")[4])"
                 $Present = Test-Path "$Deposit"
