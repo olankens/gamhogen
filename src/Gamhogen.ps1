@@ -127,6 +127,8 @@ Function Update-Chromium {
         Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^+b")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
+    
+        Use-RemoveDesktop -Pattern "Chromium*.lnk"
 
         $Address = "https://api.github.com/repos/NeverDecaf/chromium-web-store/releases/latest"
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
