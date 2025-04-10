@@ -40,18 +40,29 @@ Function Update-Appearance {
 
 Function Update-Chromium {
 
+    # Handle parameters
     Param (
         [String] $Deposit = "$Env:UserProfile\Downloads\DDL",
         [String] $Startup = "about:blank"
     )
 
+    # Handle definitions
+    $Content += 'using System;'
+    $Content += 'using System.Runtime.InteropServices;'
+    $Content += 'public class User32 {'
+    $Content += '    [DllImport("user32.dll", SetLastError = true)]'
+    $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
+    $Content += '}'
+    Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
+    Add-Type -AssemblyName System.Windows.Forms
+
+    # Update application
     $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
     $Current = Get-FileVersion "*chromium*"
     $Present = $Current -Ne "0.0"
     $Address = "https://api.github.com/repos/ungoogled-software/ungoogled-chromium-windows/releases/latest"
     $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).tag_name , "[\d.]+").Value
     $Updated = $Present -And [Version] $Current -Ge [Version] "$Version"
-
     If (-Not $Updated) {
         $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
         $Pattern = If ($Env:PROCESSOR_ARCHITECTURE -Match "^ARM") { "*installer_arm64.exe" } Else { "*installer_x64.exe" }
@@ -59,15 +70,15 @@ Function Update-Chromium {
         $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
         (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
         Invoke-Gsudo { Start-Process "$Using:Fetched" "--system-level --do-not-launch-chrome" -Wait }
+        Use-RemoveDesktop -Pattern "Chromium*.lnk"
     }
 
+    # Finish installation
     If (-Not $Present) {
         New-Item "$Deposit" -ItemType Directory -EA SI
-        Add-Type -AssemblyName System.Windows.Forms
-        Try { Add-Type '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);' -Name WinAPI -Namespace User32 } Catch {}
         $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-        [User32]::SetForegroundWindow($Process.MainWindowHandle)
-        Start-Sleep 12 ; [Windows.Forms.SendKeys]::SendWait("^l")
+        Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+        Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://settings/")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
         Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("before downloading")
@@ -125,16 +136,26 @@ Function Update-Chromium {
         Update-ChromiumExtension -Payload "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock-origin
     }
 
-    Use-RemoveDesktop -Pattern "Chromium*.lnk"
-
 }
 
 Function Update-ChromiumExtension {
 
+    # Handle parameters
     Param (
         [String] $Payload
     )
 
+    # Handle definitions
+    $Content += 'using System;'
+    $Content += 'using System.Runtime.InteropServices;'
+    $Content += 'public class User32 {'
+    $Content += '    [DllImport("user32.dll", SetLastError = true)]'
+    $Content += '    public static extern bool SetForegroundWindow(IntPtr hWnd);'
+    $Content += '}'
+    Try { Add-Type -TypeDefinition $Content -EA SI } Catch {}
+    Add-Type -AssemblyName System.Windows.Forms
+
+    # Update extension
     $Package = $Null
     $Starter = "$Env:ProgramFiles\Chromium\Application\chrome.exe"
     If (Test-path "$Starter") {
@@ -151,8 +172,6 @@ Function Update-ChromiumExtension {
             (New-Object Net.WebClient).DownloadFile("$Address", "$Package")
         }
         If ($Null -Ne $Package -And (Test-Path "$Package")) {
-            Add-Type -AssemblyName System.Windows.Forms
-            Try { Add-Type '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);' -Name WinAPI -Namespace User32 } Catch {}
             If ($Package -Like "*.zip") {
                 $Deposit = "$Env:ProgramFiles\Chromium\Unpacked\$($Payload.Split("/")[4])"
                 $Present = Test-Path "$Deposit"
@@ -162,8 +181,8 @@ Function Update-ChromiumExtension {
                 Invoke-Gsudo { Copy-Item -Path "$Using:Topmost\*" -Destination "$Using:Deposit" -Recurse -Force }
                 If ($Present) { Return }
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                [User32]::SetForegroundWindow($Process.MainWindowHandle)
-                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+                Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
@@ -176,8 +195,8 @@ Function Update-ChromiumExtension {
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                [User32]::SetForegroundWindow($Process.MainWindowHandle)
-                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("^l")
+                Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("^l")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("chrome://extensions/")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{TAB}")
@@ -186,8 +205,8 @@ Function Update-ChromiumExtension {
             }
             Else {
                 $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
-                [User32]::SetForegroundWindow($Process.MainWindowHandle)
-                Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
+                Start-Sleep 8 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
+                Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
                 Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
