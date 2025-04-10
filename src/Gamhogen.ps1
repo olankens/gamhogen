@@ -227,25 +227,6 @@ Function Update-EpicGamesLauncher {
 
 }
 
-Function Update-Hydra {
-
-    $Current = Get-FileVersion "$Env:LocalAppData\Programs\Hydra\Hydra.exe"
-    $Address = "https://api.github.com/repos/hydralauncher/hydra/releases/latest"
-    $Version = [Regex]::Match((Invoke-WebRequest "$Address" | ConvertFrom-Json).tag_name , "[\d.]+").Value
-    $Updated = [Version] "$Current" -Ge [Version] "$Version"
-
-    If (-Not $Updated) {
-        $Results = (Invoke-WebRequest "$Address" | ConvertFrom-Json).assets
-        $Address = $Results.Where( { $_.browser_download_url -Like "*setup.exe" } ).browser_download_url
-        $Fetched = Join-Path "$([IO.Path]::GetTempPath())" "$(Split-Path "$Address" -Leaf)"
-        (New-Object Net.WebClient).DownloadFile("$Address", "$Fetched")
-        Invoke-Gsudo { Start-Process "$Using:Fetched" "/S" -Wait }
-    }
-
-    Use-RemoveDesktop -Pattern "Hydra*.lnk"
-
-}
-
 Function Update-Jdownloader {
 
     Param (
@@ -456,7 +437,6 @@ If ($MyInvocation.InvocationName -Ne "." -Or "$Env:TERM_PROGRAM" -Eq "Vscode") {
         { Update-System },
         { Update-Chromium },
         { Update-EpicGamesLauncher },
-        { Update-Hydra },
         { Update-Jdownloader },
         { Update-Qbittorrent },
         { Update-Steam },
