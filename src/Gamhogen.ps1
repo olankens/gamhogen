@@ -204,7 +204,7 @@ Function Update-ChromiumExtension {
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("%{F4}") ; Start-Sleep 2
             }
             Else {
-                $Process = Start-Process "$Starter" "--lang=en --start-maximized" -PassThru
+                $Process = Start-Process "$Starter" "`"$Package`" --lang=en --start-maximized" -PassThru
                 Start-Sleep 12 ; [User32]::SetForegroundWindow($Process.MainWindowHandle)
                 Start-Sleep 5 ; [Windows.Forms.SendKeys]::SendWait("{DOWN}")
                 Start-Sleep 8 ; [Windows.Forms.SendKeys]::SendWait("{ENTER}")
