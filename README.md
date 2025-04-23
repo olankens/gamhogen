@@ -7,7 +7,7 @@ Windows automatic setup for gamers.
 # <samp>FEATURES</samp>
 
 - Update System
-- Update Chromium
+- Update Chromium (Ungoogled)
 - Update Epic Games Launcher
 - Update JDownloader
 - Update QBittorrent
