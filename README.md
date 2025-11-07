@@ -1,4 +1,10 @@
-<p align="center"><img src=".assets/icon.svg" width="132"/></p>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".assets/icon-dark.png">
+    <img src=".assets/icon-light.png" width="144">
+  </picture>
+</p>
+
 <h1 align="center"><samp>GAMHOGEN</samp></h1>
 
 <p align="center">Windows automatic setup for gamers.</p>
