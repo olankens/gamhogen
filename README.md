@@ -1,7 +1,7 @@
 <hr>
 
 <div align="center">
-  <img src=".assets/ico.svg" width="132">
+  <img src=".assets/icon.svg" width="132">
   <h1><samp>GAMHOGEN</samp></h1>
   <p>Windows automatic setup for gamers.</p>
 </div>
