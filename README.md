@@ -14,6 +14,19 @@
 
 <hr>
 
+### Features
+
+- Update System
+- Update Chromium (Ungoogled)
+- Update Epic Games Launcher
+- Update JDownloader
+- Update QBittorrent
+- Update Steam
+- Update Xmouser
+- Update Appearance
+
+<hr>
+
 ### Launch Script
 
 Blindly executing this is strongly discouraged.
