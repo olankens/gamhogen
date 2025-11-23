@@ -9,15 +9,15 @@
 
 ---
 
-<h3 align="center">Previews</h3>
+### Previews
 
 <img src=".assets/01.png" width="49.375%"/><img src=".assets/1x1.gif" width="1.25%"/><img src=".assets/02.png" width="49.375%"/>
 
 ---
 
-<h3 align="center">Launch Script</h3>
+### Launch Script
 
-<p align="center">Blindly executing this is strongly discouraged.</p>
+Blindly executing this is strongly discouraged.
 
 ```powershell
 $Address = "https://raw.githubusercontent.com/olankens/padforge/HEAD/src/Gamhogen.ps1"
